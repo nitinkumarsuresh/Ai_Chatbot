@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .response-container {
+            margin-bottom: 20px; /* Increased margin for more spacing */
+            padding: 15px;
+            border: 2px solid yellow;
+            border-radius: 5px;
+        }
+
+        .user {
+            color: chartreuse;
+        }
+
+        .ai {
+            color: rgb(29, 239, 218);
+        }
+
+        #chat-container {
+            width: 80%;
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            /* max-width: 600px; */
+            margin: auto;
+            padding: 20px;
+            background-color: black;
+            border: 2px solid yellow;
+            border-radius: 10px;
+            margin-bottom: 50px; /* Adjust as needed */
+        }
+
+        #chat-history {
+            overflow-y: scroll;
+            max-height: 300px;
+            border-bottom: 2px solid yellow;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        input {
+            width: calc(80% - 20px);
+            padding: 14px;
+            margin: 5px 0;
+            border: 1px solid yellow;
+            border-radius: 5px;
+            color: black;
+        }
+
+        button {
+            width: calc(20% - 20px);
+            background-color: yellow;
+            color: black;
+            padding: 11px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+            margin-top: -5px;
+        }
+        h1{
+            text-align: center;
+        }
+        span{
+            color: chartreuse;
+        }
+    </style>
+    <h1><span>Ai</span>'s G<span>PT</span></h1>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-history"></div>
+        <input type="text" id="user-input" placeholder="You: ">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        function sendMessage() {
+            var user_input = document.getElementById("user-input").value;
+            var chat_history = document.getElementById("chat-history");
+
+            // Send an AJAX request to the /chat endpoint
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'user_input=' + encodeURIComponent(user_input) + '&chat_history=' + encodeURIComponent(chat_history.innerHTML),
+            })
+            .then(response => response.json())
+            .then(data => {
+                var responseContainer = document.createElement("div");
+                responseContainer.classList.add("response-container");
+
+                var userDiv = document.createElement("div");
+                userDiv.classList.add("user");
+                userDiv.innerHTML = "<b>You:</b> " + user_input;
+
+                var aiDiv = document.createElement("div");
+                aiDiv.classList.add("ai");
+                aiDiv.innerHTML = "<b>AI:</b> " + data.ai_response;
+
+                responseContainer.appendChild(userDiv);
+                responseContainer.appendChild(aiDiv);
+
+                chat_history.appendChild(responseContainer);
+
+                // Scroll to the bottom
+                chat_history.scrollTop = chat_history.scrollHeight;
+
+                document.getElementById("user-input").value = "";
+            });
+        }
+    </script>
+</body>
+</html>
