@@ -5,7 +5,7 @@ import time
 app = Flask(__name__)
 
 # Set your OpenAI API key
-openai.api_key = "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"
+openai.api_key = "YOUR_API"
 
 def generate_response(prompt):
     try:
